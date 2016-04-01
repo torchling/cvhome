@@ -9,6 +9,7 @@
 #include <vector>
 
 using namespace std;
+using namespace cv;
 
 int histo[256]; //for histogram
 int histoR[256];
@@ -23,7 +24,7 @@ int tB[256];
 int tY[256];
 int tV[256];
 float p=256.0;
-
+float Y,cb,cr;
 int cnt;
 short r,g,b;
 
@@ -31,25 +32,43 @@ short r,g,b;
 
 int main( int argc, char **argv)
 {
+    CvScalar scalar1;
 
     IplImage *img = cvLoadImage( "mp1.jpg",1);
     IplImage *grayimg = cvCreateImage(cvGetSize(img), IPL_DEPTH_8U, 1 );
 
-    IplImage *img2 = cvLoadImage( "mp1a.jpg",1);
-    IplImage *rgb_img = cvCreateImage(cvGetSize(img2), IPL_DEPTH_8U, 3 );
-
     IplImage *src2 = cvLoadImage( "mp1a.jpg",1);
+    IplImage *rgb_img = cvCreateImage(cvGetSize(src2), IPL_DEPTH_8U, 3 );
 
     IplImage *hsv = cvCreateImage(cvGetSize(src2), IPL_DEPTH_8U, 3);
     cvCvtColor( src2, hsv, CV_BGR2HSV );
+    IplImage *hsv2 = cvCreateImage(cvGetSize(src2), IPL_DEPTH_8U, 3);
 
     IplImage *yuv = cvCreateImage(cvGetSize(src2), IPL_DEPTH_8U, 3 );
     cvCvtColor( src2, yuv, CV_BGR2YCrCb );
+    IplImage *yuv2 = cvCreateImage(cvGetSize(src2), IPL_DEPTH_8U, 3 );
 
-    double gray;
-    CvScalar scalar1;
+    CvSize histoSize = cvSize(256,256);
 
+    IplImage *Image1;
+    Image1 = cvCreateImage(histoSize, IPL_DEPTH_8U, 1);
+    IplImage *Image2;
+    Image1 = cvCreateImage(histoSize, IPL_DEPTH_8U, 1);
 
+    IplImage *Image_rgb;
+    Image1 = cvCreateImage(histoSize, IPL_DEPTH_8U, 3);
+    IplImage *Image_rgb2;
+    Image1 = cvCreateImage(histoSize, IPL_DEPTH_8U, 3);
+
+    IplImage *Image_hsv;
+    Image1 = cvCreateImage(histoSize, IPL_DEPTH_8U, 3);
+    IplImage *Image_hsv2;
+    Image1 = cvCreateImage(histoSize, IPL_DEPTH_8U, 3);
+
+    IplImage *Image_yuv;
+    Image1 = cvCreateImage(histoSize, IPL_DEPTH_8U, 3);
+    IplImage *Image_yuv2;
+    Image1 = cvCreateImage(histoSize, IPL_DEPTH_8U, 3);
 
 //--mp1---
     p=256.0/(img->width*img->height);
@@ -83,13 +102,13 @@ int main( int argc, char **argv)
     }
 
 //--mp1a---
-    p=256.0/(img2->width*img2->height);
+    p=256.0/(src2->width*src2->height);
     //Red
-    for(int i=0; i< img2->height;i++)
+    for(int i=0; i< src2->height;i++)
     {
-        for(int j=0; j < img2->width; j++)
+        for(int j=0; j < src2->width; j++)
         {
-            scalar1 = cvGet2D(img2,i,j);
+            scalar1 = cvGet2D(src2,i,j);
             for(int k=0;k<256;k++){
                 if(k==scalar1.val[2])
                     histoR[k]+=1;
@@ -102,11 +121,11 @@ int main( int argc, char **argv)
         tR[i]=tR[i-1]+p*histoR[i];
     }
     //Green
-    for(int i=0; i< img2->height;i++)
+    for(int i=0; i< src2->height;i++)
     {
-        for(int j=0; j < img2->width; j++)
+        for(int j=0; j < src2->width; j++)
         {
-            scalar1 = cvGet2D(img2,i,j);
+            scalar1 = cvGet2D(src2,i,j);
             for(int k=0;k<256;k++){
                 if(k==scalar1.val[1])
                     histoG[k]+=1;
@@ -119,11 +138,11 @@ int main( int argc, char **argv)
         tG[i]=tG[i-1]+p*histoG[i];
     }
     //blue
-    for(int i=0; i< img2->height;i++)
+    for(int i=0; i< src2->height;i++)
     {
-        for(int j=0; j < img2->width; j++)
+        for(int j=0; j < src2->width; j++)
         {
-            scalar1 = cvGet2D(img2,i,j);
+            scalar1 = cvGet2D(src2,i,j);
             for(int k=0;k<256;k++){
                 if(k==scalar1.val[0])
                     histoB[k]+=1;
@@ -136,11 +155,11 @@ int main( int argc, char **argv)
         tB[i]=tB[i-1]+p*histoB[i];
     }
     //RGB
-    for(int i=0; i< img2->height;i++)
+    for(int i=0; i< src2->height;i++)
     {
-        for(int j=0; j < img2->width; j++)
+        for(int j=0; j < src2->width; j++)
         {
-            scalar1 = cvGet2D(img2,i,j);
+            scalar1 = cvGet2D(src2,i,j);
             for(int k=0;k<256;k++){
                 if(k==scalar1.val[2])
                     r=tR[k];
@@ -157,14 +176,14 @@ int main( int argc, char **argv)
         }
     }
 
-    //--mp1a_HSV---
+//--mp1a_HSV---
     p=256.0/(src2->width*src2->height);
 
     for(int i=0; i< src2->height;i++)
     {
         for(int j=0; j < src2->width; j++)
         {
-            scalar1 = cvGet2D(src2,i,j);
+            scalar1 = cvGet2D(hsv,i,j);
             for(int k=0;k<256;k++){
                 if(k==scalar1.val[2])
                     histoV[k]+=1;
@@ -180,7 +199,7 @@ int main( int argc, char **argv)
     {
         for(int j=0; j < src2->width; j++)
         {
-            scalar1 = cvGet2D(src2,i,j);
+            scalar1 = cvGet2D(hsv,i,j);
             for(int k=0;k<256;k++){
                 if(k==scalar1.val[2])
                     cvSet2D(hsv,i,j,cvScalar(scalar1.val[0],scalar1.val[1],tV[k]));
@@ -195,7 +214,7 @@ int main( int argc, char **argv)
     {
         for(int j=0; j < src2->width; j++)
         {
-            scalar1 = cvGet2D(src2,i,j);
+            scalar1 = cvGet2D(yuv,i,j);
             for(int k=0;k<256;k++){
                 if(k==scalar1.val[0])
                     histoY[k]+=1;
@@ -211,11 +230,32 @@ int main( int argc, char **argv)
     {
         for(int j=0; j < src2->width; j++)
         {
-            scalar1 = cvGet2D(src2,i,j);
+            scalar1 = cvGet2D(yuv,i,j);
             for(int k=0;k<256;k++){
                 if(k==scalar1.val[0])
                     cvSet2D(yuv,i,j,cvScalar(tY[k],scalar1.val[1],scalar1.val[2]));
             }
+        }
+    }
+    cvCvtColor( hsv, hsv2, CV_HSV2BGR );
+    cvCvtColor( yuv, yuv2, CV_YCrCb2BGR );
+
+    for(int x=0; x<256 ; x++)
+    {
+        for(int y=0; y<256; y++)
+        {
+            if((255-y)<(histo[x]/128.0))
+                cvSet2D(Image1,y,x,cvScalar(0,0,0));
+            else cvSet2D(Image1,y,x,cvScalar(255,255,255));
+        }
+    }
+    for(int x=0; x<256 ; x++)
+    {
+        for(int y=0; y<256; y++)
+        {
+            if((255-y)<(histo[x]/128.0))
+                cvSet2D(Image1,y,t[x],cvScalar(0,0,0));
+            else cvSet2D(Image1,y,t[x],cvScalar(255,255,255));
         }
     }
 
@@ -226,10 +266,13 @@ int main( int argc, char **argv)
     cvShowImage( "mp1a_RGB", rgb_img );
 
     cvNamedWindow("mp1a_HSV", 1);
-    cvShowImage( "mp1a_HSV", hsv );
+    cvShowImage( "mp1a_HSV", hsv2 );
 
     cvNamedWindow("mp1a_YCbCr", 1);
-    cvShowImage( "mp1a_YCbCr", yuv );
+    cvShowImage( "mp1a_YCbCr", yuv2 );
+
+    cvNamedWindow("histo1", 1);
+    cvShowImage( "histo1", Image1 );
 
     cvWaitKey(0);
 
@@ -244,6 +287,9 @@ int main( int argc, char **argv)
 
     cvReleaseImage( &yuv );
     cvDestroyWindow("mp1a_YCbCr");
+
+    cvReleaseImage( &Image1 );
+    cvDestroyWindow("histo1");
 
     return 0;
 }
