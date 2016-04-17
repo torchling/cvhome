@@ -102,7 +102,7 @@ int main( int argc, char **argv)
     }
 
 //--mp1a---
-    p=256.0/(src2->width*src2->height);
+    p=345.0/(src2->width*src2->height);
     //Red
     for(int i=0; i< src2->height;i++)
     {
@@ -177,7 +177,7 @@ int main( int argc, char **argv)
     }
 
 //--mp1a_HSV---
-    p=256.0/(src2->width*src2->height);
+    p=345.0/(src2->width*src2->height);
 
     for(int i=0; i< src2->height;i++)
     {
@@ -208,7 +208,7 @@ int main( int argc, char **argv)
     }
 
 //--mp1a_YCbCr---
-    p=256.0/(src2->width*src2->height);
+    p=345.0/(src2->width*src2->height);
 
     for(int i=0; i< src2->height;i++)
     {
@@ -244,18 +244,19 @@ int main( int argc, char **argv)
     {
         for(int y=0; y<256; y++)
         {
-            if((255-y)<(histo[x]/128.0))
-                cvSet2D(Image1,y,x,cvScalar(0,0,0));
-            else cvSet2D(Image1,y,x,cvScalar(255,255,255));
+            if((255-y)<(histoR[x]/128.0))
+                cvSet2D(Image1,y,x,cvScalar(150,150,255));
+            else cvSet2D(Image1,y,x,cvScalar(3,3,3));
         }
     }
+
     for(int x=0; x<256 ; x++)
     {
         for(int y=0; y<256; y++)
         {
-            if((255-y)<(histo[x]/128.0))
-                cvSet2D(Image1,y,t[x],cvScalar(0,0,0));
-            else cvSet2D(Image1,y,t[x],cvScalar(255,255,255));
+            if((255-y)<(histoR[x]/128.0))
+                cvSet2D(Image1,y,tR[x],cvScalar(0,0,255));
+            else cvSet2D(Image1,y,tR[x],cvScalar(0,0,0));
         }
     }
 
